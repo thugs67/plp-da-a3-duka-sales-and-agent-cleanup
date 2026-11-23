@@ -14,7 +14,7 @@ def clean_agent_data(
 ) -> tuple[pd.DataFrame, dict]:
     """Clean agent transactions and merge with the registered agent register.
 
-    Applies deterministic, rule-based cleaning steps without hard-coded row indices:
+    Applies deterministic, rule-based cleaning steps with zero hard-coded row numbers:
       1. **Uniqueness:** Drops exact duplicate rows and resolves duplicate `txn_id`s
          by preferring records linked to a registered `agent_id`.
       2. **Consistency:** Strips whitespace and standardizes `txn_type` into strictly
@@ -24,8 +24,8 @@ def clean_agent_data(
          `datetime64[ns]`.
       4. **Completeness:** Flags missing or non-positive amounts (`is_missing_or_invalid_amount`)
          without imputing synthetic values, and optionally filters them out.
-      5. **Outliers (IQR):** Flags standard ($Q_3 + 1.5 \\times \\text{IQR}$) and extreme
-         ($Q_3 + 3.0 \\times \\text{IQR}$) upper outliers, isolating injected KES 250,000
+      5. **Outliers (IQR):** Flags standard ($Q_3 + 1.5 \times \text{IQR}$) and extreme
+         ($Q_3 + 3.0 \times \text{IQR}$) upper outliers, isolating injected KES 250,000
          anomalies while preserving legitimate right-skewed transactions.
       6. **Referential Integrity (Merge):** Audits transactions against `agents['agent_id']`,
          logs unknown/orphan agent IDs (e.g., `AG099`), and joins `county` and `onboarded`.
@@ -35,7 +35,7 @@ def clean_agent_data(
         agents: Registered agent master DataFrame (`agent_id`, `county`, `onboarded`).
         drop_missing_amounts: If True (default), exclude rows with missing/non-positive
             amounts from the returned clean DataFrame after flagging and logging them.
-        drop_extreme_outliers: If True (default), exclude extreme $3.0 \\times \\text{IQR}$
+        drop_extreme_outliers: If True (default), exclude extreme $3.0 \times \text{IQR}$
             outliers (such as the KES 250,000 anomalies) after flagging and logging them.
 
     Returns:
